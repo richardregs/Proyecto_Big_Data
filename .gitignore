@@ -1,4 +1,5 @@
 
 /API/data/bigdata/raw
 /API/venv
-/API/__pycache__
+*/__pycache__
+*.pyc

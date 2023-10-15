@@ -7,7 +7,7 @@ import json
 import pandas as pd
 
 
-PATH_FILE = "./Calendario Agricola.xlsx"
+PATH_FILE = r"C:\Users\Usuario\Downloads\Calendario Agricola.xlsx"
 conn = http.client.HTTPConnection("127.0.0.1", 8000)
 
 df = pd.read_excel(PATH_FILE, sheet_name="Calendario Agrícola")
