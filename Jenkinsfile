@@ -21,5 +21,10 @@ pipeline{
                 echo "Coverage stage disabled"
             }
         }
+        stage ('Deploy'){
+            steps{
+                echo "DEPLOY stage disabled"
+            }
+        }
     }
 }
