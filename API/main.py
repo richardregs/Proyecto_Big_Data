@@ -18,6 +18,7 @@ import pandas as pd
 from auth.authenticate import authenticate_user
 from auth.token import create_token, get_user_disabled_current
 from model.User import User
+from utils.gcs_actions import ls_bucket, upload_file
 
 load_dotenv()
 app = FastAPI()
@@ -80,7 +81,7 @@ async def get_files():
     status_code = 404
 
     try:
-        file_list = os.listdir(PATH_DIR)
+        file_list = ls_bucket()
         response_dict = {
             "service": "get_files",
             "files": file_list
@@ -103,15 +104,14 @@ async def create_file(body: Dict):
     status_code = 404
     try:
         file_name = body["file_name"]
-        path_file = os.path.join(PATH_DIR, f"{file_name}.csv")
-        file_list = os.listdir(PATH_DIR)
-        if f"{file_name}.csv" in file_list:
-            status_code = 201
-            return JSONResponse(content="the file exists",
-                                status_code=status_code)
+        file_list = ls_bucket()
+        for file in file_list:
+            if f"{file_name}.csv" in file:
+                status_code = 201
+                return JSONResponse(content="the file exists",
+                                    status_code=status_code)
         response_dict = body["data"]
-        df = pd.DataFrame(response_dict)
-        df.to_csv(path_file, index=False)
+        upload_file(f"{file_name}.csv", response_dict)
         status_code = 200
         return JSONResponse(content="ok", status_code=status_code)
     except Exception as err:
@@ -130,14 +130,13 @@ async def replace_file(body: Dict):
     status_code = 404
     try:
         file_name = body["file_name"]
-        path_file = os.path.join(PATH_DIR, f"{file_name}.csv")
-        file_list = os.listdir(PATH_DIR)
-        if f"{file_name}.csv" not in file_list:
-            return JSONResponse(content="Not found file",
-                                status_code=status_code)
+        file_list = ls_bucket()
+        for file in file_list:
+            if f"{file_name}.csv" not in file:
+                return JSONResponse(content="Not found file",
+                                    status_code=status_code)
         response_dict = body["data"]
-        df = pd.DataFrame(response_dict)
-        df.to_csv(path_file, index=False)
+        upload_file(f"{file_name}.csv", response_dict)
         status_code = 200
         return JSONResponse(content="ok", status_code=status_code)
     except Exception as err:
