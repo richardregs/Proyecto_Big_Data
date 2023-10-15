@@ -3,9 +3,10 @@ Token
 """
 from typing import Union
 from datetime import datetime, timedelta
+from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordBearer
 from fastapi import HTTPException, Depends
-from jose import jwt, JWTError
+from jose import jwt, JWTError, exceptions
 
 from auth.authenticate import get_user
 from model.User import User
@@ -29,13 +30,34 @@ def create_token(data: dict, time_expire: Union[datetime, None] = None):
     """
     data_copy = data.copy()
     if time_expire is None:
-        expires = datetime.utcnow() + timedelta(minutes=15)
+        expires = datetime.utcnow() + timedelta(minutes=120)
     else:
         expires = datetime.utcnow() + time_expire
 
     data_copy.update({"exp": expires})
     token_jwt = jwt.encode(data_copy, key=SECRET_KEY, algorithm=ALGORITHM)
     return token_jwt
+
+
+def validate_token(token, output=False):
+    """_summary_
+
+    Args:
+        token (_type_): _description_
+        output (bool, optional): _description_. Defaults to False.
+
+    Returns:
+        _type_: _description_
+    """
+    try:
+        if output:
+            return jwt.decode(token, key=SECRET_KEY, algorithms=[ALGORITHM])
+    except exceptions.ExpiredSignatureError:
+        return JSONResponse(content={"message": "Token Expired"},
+                            status_code=401)
+    except exceptions.JWTError:
+        return JSONResponse(content={"message": "Error with token JWT"},
+                            status_code=401)
 
 
 def get_user_current(token: str = Depends(ouath2_schema)):
@@ -60,7 +82,7 @@ def get_user_current(token: str = Depends(ouath2_schema)):
                                 detail="Could not validate credentials",
                                 headers={"WWW-Authenticate": "Bearer"})
     except JWTError:
-        username = [""]
+        username = ""
 
     user = get_user(username)
     if not user:

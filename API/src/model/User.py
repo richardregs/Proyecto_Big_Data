@@ -24,3 +24,13 @@ class UserInDB(User):
         User (_type_): _description_
     """
     hashed_password: str
+
+
+class UserLogin(BaseModel):
+    """_summary_
+
+    Args:
+        BaseModel (_type_): _description_
+    """
+    username: Union[str, None] = None
+    hashed_password: Union[str, None] = None

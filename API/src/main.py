@@ -10,23 +10,24 @@ from typing import Dict
 from datetime import timedelta
 from dotenv import load_dotenv
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Header
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
-import pandas as pd
 from auth.authenticate import authenticate_user
-from auth.token import create_token, get_user_disabled_current
-from model.User import User
+from auth.token import create_token, get_user_disabled_current, validate_token
+from model.User import User, UserLogin
 from utils.gcs_actions import ls_bucket, upload_file
-
 load_dotenv()
+
 app = FastAPI()
+# app.include_router(users_github)
 
 PATH_API = os.getenv('PATH_API')
 PATH_DIR = os.getenv('PATH_DIR')
 
 ouath2_schema = OAuth2PasswordBearer("/token")
+
 
 @app.get("/")
 def index():
@@ -35,6 +36,33 @@ def index():
     Returns: Hi World
     """
     return {"Index": "Hi World"}
+
+
+@app.post("/user")
+def user_login(user_token: UserLogin):
+    """
+    Index
+    Returns: user
+    """
+    user_db = authenticate_user(user_token.username,
+                                user_token.hashed_password)
+    access_token_jwt = create_token({"sub": user_db.username})
+    return {"access_token": access_token_jwt,
+            "token_type": "bearer"}
+
+
+@app.post("/verify/token")
+def verufy_token(Authorization: str = Header(None)):
+    """_summary_
+
+    Args:
+        Authorization (str, optional): _description_. Defaults to Header(None).
+
+    Returns:
+        _type_: _description_
+    """
+    token = Authorization.split(" ")[1]
+    return validate_token(token, output=True)
 
 
 @app.get("/user/me")

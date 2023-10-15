@@ -31,14 +31,13 @@ def get_user(username):
     Returns:
         _type_: _description_
     """
-    db = fake_users_db
-    if username in db:
-        user_data = db[username]
-        return UserInDB(**user_data)
+    user_db = fake_users_db.get(username)
+    if user_db is not None:
+        return UserInDB(**user_db)
     return None
 
 
-def authenticate_user(username, password):
+def authenticate_user(username="", password=""):
     """_summary_
 
     Args:

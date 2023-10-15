@@ -1,0 +1,9 @@
+from fastapi import APIRouter
+from middleware.verify_token_route import VerifyTokenRoute
+
+users_github = APIRouter(route_class=VerifyTokenRoute)
+
+
+@users_github.post("/users/github")
+def github_users(name: str):
+    return {f"{name}"}
