@@ -54,7 +54,7 @@ def authenticate_user(username, password):
     """
     user = get_user(username)
 
-    if not user.username:
+    if user is None or user.username is None:
         raise HTTPException(status_code=401,
                             detail="Could not validate credentials",
                             headers={"WWW-Authenticate": "Bearer"})
