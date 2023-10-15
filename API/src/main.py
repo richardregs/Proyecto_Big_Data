@@ -131,10 +131,14 @@ async def replace_file(body: Dict):
     try:
         file_name = body["file_name"]
         file_list = ls_bucket()
+        file_exist = False
         for file in file_list:
-            if f"{file_name}.csv" not in file:
-                return JSONResponse(content="Not found file",
-                                    status_code=status_code)
+            if f"{file_name}.csv" in file:
+                file_exist = True
+                break
+        if not file_exist:
+            return JSONResponse(content="Not found file",
+                                status_code=status_code)
         response_dict = str(body["data"])
         upload_file(f"{file_name}.csv", response_dict)
         status_code = 200
