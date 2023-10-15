@@ -12,17 +12,17 @@ conn = http.client.HTTPConnection("34.28.131.194", 8001)
 
 df = pd.read_excel(PATH_FILE, sheet_name="Calendario Agrícola")
 df_dict = df.to_dict('records')
-df_csv = df.to_csv(sep=";", index=False)
+df_csv = df.to_csv(sep=";", index=False, encoding='utf-8')
 
 payload = json.dumps({
-    "file_name": "Calendario Agricolav3",
+    "file_name": "Calendario Agricolav2",
     "data": df_csv
     })
 headers = {
-  'Content-Type': 'application/json'
+  'Content-Type': 'application/json; charset=utf-8'
 }
 
-conn.request("POST", "/api/big_data/files/v1.0/", payload, headers)
+conn.request("PUT", "/api/big_data/files/v1.0/", payload, headers)
 res = conn.getresponse()
 data = res.read()
 print(data.decode("utf-8"))

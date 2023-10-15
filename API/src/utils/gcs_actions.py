@@ -26,5 +26,5 @@ def upload_file(file_name, data):
         data (csv)
     """
     path = f"{PATH_WORKLOAD}/{file_name}"
-    with gcs.open(path, "w") as file:
+    with gcs.open(path, "w", encoding="utf-8",) as file:
         file.write(data)
