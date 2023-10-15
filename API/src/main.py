@@ -140,6 +140,7 @@ async def replace_file(body: Dict):
             return JSONResponse(content="Not found file",
                                 status_code=status_code)
         response_dict = str(body["data"])
+        print(response_dict)
         upload_file(f"{file_name}.csv", response_dict)
         status_code = 200
         return JSONResponse(content="ok", status_code=status_code)
