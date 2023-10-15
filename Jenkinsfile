@@ -11,14 +11,14 @@ pipeline{
                 echo "TEST stage disabled"
             }
         }
-        stage ('Fortify'){
-            steps{
-                echo "Fortify stage disabled"
-            }
-        }
         stage ('Coverage'){
             steps{
                 echo "Coverage stage disabled"
+            }
+        }
+        stage ('Fortify'){
+            steps{
+                echo "Fortify stage disabled"
             }
         }
         stage ('Deploy'){
