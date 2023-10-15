@@ -8,10 +8,10 @@ This file contains the FastAPI app and the endpoints:
 import os
 from dotenv import load_dotenv
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Header
 
 from auth.authenticate import authenticate_user
-from auth.token import create_token
+from auth.token import create_token, validate_token
 from model.User import UserLogin
 from routes.routes_files import files_routes
 
@@ -42,3 +42,17 @@ def user_login(user_token: UserLogin):
     access_token_jwt = create_token({"sub": user_db.username})
     return {"access_token": access_token_jwt,
             "token_type": "bearer"}
+
+
+@app.post("/verify/token")
+def verify_token(Authorization: str = Header(None)):
+    """_summary_
+
+    Args:
+        Authorization (str, optional): _description_. Defaults to Header(None).
+
+    Returns:
+        _type_: _description_
+    """
+    token = Authorization.split(" ")[1]
+    return validate_token(token, output=True)
