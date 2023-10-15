@@ -2,22 +2,22 @@ pipeline{
     agent any
     stages{
         stage ('Build'){
-            step{
+            steps{
                 echo "BUILD stage disabled"
             }
         }
         stage ('Tests'){
-            step{
+            steps{
                 echo "TEST stage disabled"
             }
         }
         stage ('Fortify'){
-            step{
+            steps{
                 echo "Fortify stage disabled"
             }
         }
         stage ('Coverage'){
-            step{
+            steps{
                 echo "Coverage stage disabled"
             }
         }
