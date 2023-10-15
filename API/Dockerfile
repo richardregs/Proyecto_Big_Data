@@ -1,7 +1,9 @@
 FROM python:3.8.5
 ENV PYTHONUNBUFFERED 1
 ENV DEBUG True
-RUN apt update
+RUN apt-get update && apt-get install -y \
+    libdbus-1-dev \
+    pkg-config
 RUN ln -sf /usr/share/zoneinfo/America/Lima /etc/localtime
 
 RUN mkdir /API
