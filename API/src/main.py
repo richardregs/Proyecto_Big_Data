@@ -6,27 +6,20 @@ This file contains the FastAPI app and the endpoints:
 
 # Third party imports
 import os
-from typing import Dict
-from datetime import timedelta
 from dotenv import load_dotenv
 
-from fastapi import FastAPI, Depends, Header
-from fastapi.responses import JSONResponse
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi import FastAPI
 
 from auth.authenticate import authenticate_user
-from auth.token import create_token, get_user_disabled_current, validate_token
-from model.User import User, UserLogin
-from utils.gcs_actions import ls_bucket, upload_file
+from auth.token import create_token
+from model.User import UserLogin
+from routes.routes_files import files_routes
+
 load_dotenv()
+PATH_API = os.getenv('PATH_API')
 
 app = FastAPI()
-# app.include_router(users_github)
-
-PATH_API = os.getenv('PATH_API')
-PATH_DIR = os.getenv('PATH_DIR')
-
-ouath2_schema = OAuth2PasswordBearer("/token")
+app.include_router(files_routes, prefix=PATH_API)
 
 
 @app.get("/")
@@ -49,127 +42,3 @@ def user_login(user_token: UserLogin):
     access_token_jwt = create_token({"sub": user_db.username})
     return {"access_token": access_token_jwt,
             "token_type": "bearer"}
-
-
-@app.post("/verify/token")
-def verufy_token(Authorization: str = Header(None)):
-    """_summary_
-
-    Args:
-        Authorization (str, optional): _description_. Defaults to Header(None).
-
-    Returns:
-        _type_: _description_
-    """
-    token = Authorization.split(" ")[1]
-    return validate_token(token, output=True)
-
-
-@app.get("/user/me")
-def user(user_me: User = Depends(get_user_disabled_current)):
-    """_summary_
-
-    Args:
-        user (User, optional):
-        . Defaults to Depends(get_user_disabled_current).
-
-    Returns:
-        _type_: _description_
-    """
-    return user_me
-
-
-@app.post("/token")
-def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    """_summary_
-
-    Args:
-        form_data (OAuth2PasswordRequestForm, optional):
-        . Defaults to Depends().
-
-    Returns:
-        _type_: _description_
-    """
-    user_form = authenticate_user(form_data.username, form_data.password)
-    access_token_expires = timedelta(minutes=30)
-    access_token_jwt = create_token({"sub": user_form.username},
-                                    access_token_expires)
-    return {"access_token": access_token_jwt,
-            "token_type": "bearer"}
-
-
-@app.get(path=PATH_API)
-async def get_files():
-    """Get method
-
-    Returns:
-        list: list of files
-    """
-    response_dict = {}
-    status_code = 404
-
-    try:
-        file_list = ls_bucket()
-        response_dict = {
-            "service": "get_files",
-            "files": file_list
-        }
-        status_code = 200
-        return JSONResponse(content=response_dict, status_code=status_code)
-    except Exception as err:
-        return JSONResponse(content=err, status_code=status_code)
-
-
-@app.post(path=PATH_API)
-async def create_file(body: Dict):
-    """"
-    body: {
-        "file_name": {str},
-        "data": {json}
-        }
-    """
-    response_dict = {}
-    status_code = 404
-    try:
-        file_name = body["file_name"]
-        file_list = ls_bucket()
-        for file in file_list:
-            if f"{file_name}.csv" in file:
-                status_code = 201
-                return JSONResponse(content="the file exists",
-                                    status_code=status_code)
-        response_dict = str(body["data"])
-        upload_file(f"{file_name}.csv", response_dict)
-        status_code = 200
-        return JSONResponse(content="ok", status_code=status_code)
-    except Exception as err:
-        return JSONResponse(content=err, status_code=status_code)
-
-
-@app.put(path=PATH_API)
-async def replace_file(body: Dict):
-    """"
-    body: {
-        "file_name": {str},
-        "data": {json}
-        }
-    """
-    response_dict = {}
-    status_code = 404
-    try:
-        file_name = body["file_name"]
-        file_list = ls_bucket()
-        file_exist = False
-        for file in file_list:
-            if f"{file_name}.csv" in file:
-                file_exist = True
-                break
-        if not file_exist:
-            return JSONResponse(content="Not found file",
-                                status_code=status_code)
-        response_dict = str(body["data"])
-        upload_file(f"{file_name}.csv", response_dict)
-        status_code = 200
-        return JSONResponse(content="ok", status_code=status_code)
-    except Exception as err:
-        return JSONResponse(content=err, status_code=status_code)
