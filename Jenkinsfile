@@ -25,9 +25,14 @@ pipeline{
             steps{
                 echo "DEPLOY stage disabled"
                 script {
-                    def deployScript = './deploy.sh' // Ruta relativa al Jenkinsfile
-                    sh "chmod +x ${deployScript}" // Asegúrate de que tenga permisos de ejecución
-                    sh "./${deployScript}" // Ejecuta el script
+                    def deployDirectory = '/var/lib/jenkins/workspace/deploy-mtericas-JOB-api'
+
+                    echo "Ingresando al directorio de despliegue"
+                    sh "cd ${deployDirectory}"
+
+                    echo "Ejecutando docker-compose para desplegar la aplicación"
+                    sh "sudo docker-compose down"
+                    sh "sudo docker-compose up -d"
                 }
             }
         }
