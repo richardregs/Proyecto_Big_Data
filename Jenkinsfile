@@ -24,7 +24,7 @@ pipeline{
         stage ('Deploy'){
             steps{
                 echo "DEPLOY stage disabled"
-                cd "API"
+                sh "deploy.sh"
             }
         }
     }
