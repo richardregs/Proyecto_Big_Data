@@ -110,7 +110,7 @@ async def create_file(body: Dict):
                 status_code = 201
                 return JSONResponse(content="the file exists",
                                     status_code=status_code)
-        response_dict = body["data"]
+        response_dict = str(body["data"])
         upload_file(f"{file_name}.csv", response_dict)
         status_code = 200
         return JSONResponse(content="ok", status_code=status_code)
@@ -135,7 +135,7 @@ async def replace_file(body: Dict):
             if f"{file_name}.csv" not in file:
                 return JSONResponse(content="Not found file",
                                     status_code=status_code)
-        response_dict = body["data"]
+        response_dict = str(body["data"])
         upload_file(f"{file_name}.csv", response_dict)
         status_code = 200
         return JSONResponse(content="ok", status_code=status_code)
