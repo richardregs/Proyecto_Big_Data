@@ -24,7 +24,11 @@ pipeline{
         stage ('Deploy'){
             steps{
                 echo "DEPLOY stage disabled"
-                sh "deploy.sh"
+                script {
+                    def deployScript = './deploy.sh' // Ruta relativa al Jenkinsfile
+                    sh "chmod +x ${deployScript}" // Asegúrate de que tenga permisos de ejecución
+                    sh "./${deployScript}" // Ejecuta el script
+                }
             }
         }
     }
