@@ -1,14 +1,14 @@
-version: "3.9"
+version: "3.3"
 services:
   dmc_api:
     restart: always
     build: ./API
     image: localhost/dmc-api
     volumes:
-      - ./API/:/API/
+      - ./API/src:/API/src
     ports:
       - "8001:8000"
     command: uvicorn main:app --reload --workers 3 --host 0.0.0.0 --port 8000
     privileged: true
 networks:
-  - dmc
+  dmc

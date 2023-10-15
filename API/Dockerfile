@@ -6,8 +6,8 @@ RUN ln -sf /usr/share/zoneinfo/America/Lima /etc/localtime
 
 RUN mkdir /API
 WORKDIR /API
-COPY API ./API
+COPY src ./src
 COPY requirements.txt .
 RUN python -m pip install --upgrade pip
 RUN pip install -r requirements.txt
-WORKDIR /API
+WORKDIR /API/src
