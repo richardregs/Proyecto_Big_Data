@@ -54,5 +54,7 @@ def verify_token(Authorization: str = Header(None)):
     Returns:
         _type_: _description_
     """
+    if Authorization is None:
+        return {"message": "No valid token found"}
     token = Authorization.split(" ")[1]
     return validate_token(token, output=True)
