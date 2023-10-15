@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   dmc_api:
     restart: always
@@ -8,11 +7,7 @@ services:
        - ./API/:/API/
     ports:
       - "8001:8000"
-    container_name: dmc-api
     command: uvicorn main:app --reload --workers 3 --host 0.0.0.0 --port 8000
-    networks:
-      - dmc
     privileged: true
 networks:
-  palantir:
-    name: dmc
+  name: dmc
