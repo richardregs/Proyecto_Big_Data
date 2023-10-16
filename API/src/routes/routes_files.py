@@ -40,8 +40,19 @@ async def get_files():
         }
         status_code = 200
         return JSONResponse(content=response_dict, status_code=status_code)
-    except Exception as err:
-        return JSONResponse(content=err, status_code=status_code)
+    except FileNotFoundError:
+        return JSONResponse(content={"message": "File not found error"},
+                            status_code=status_code)
+    except PermissionError:
+        return JSONResponse(content={"message": "Permission error"},
+                            status_code=status_code)
+    except IOError:
+        return JSONResponse(content={"message": "Error in I/O"},
+                            status_code=status_code)
+    except ValueError:
+        return JSONResponse(content={"message":
+                                     "Incorrect arg or unexpected values"},
+                            status_code=status_code)
 
 
 @files_routes.post(path='/')
@@ -66,8 +77,19 @@ async def create_file(body: Dict):
         upload_file(f"{file_name}.csv", response_dict)
         status_code = 200
         return JSONResponse(content="ok", status_code=status_code)
-    except Exception as err:
-        return JSONResponse(content=err, status_code=status_code)
+    except FileNotFoundError:
+        return JSONResponse(content={"message": "File not found error"},
+                            status_code=status_code)
+    except PermissionError:
+        return JSONResponse(content={"message": "Permission error"},
+                            status_code=status_code)
+    except IOError:
+        return JSONResponse(content={"message": "Error in I/O"},
+                            status_code=status_code)
+    except ValueError:
+        return JSONResponse(content={"message":
+                                     "Incorrect arg or unexpected values"},
+                            status_code=status_code)
 
 
 @files_routes.put(path='/')
@@ -95,5 +117,16 @@ async def replace_file(body: Dict):
         upload_file(f"{file_name}.csv", response_dict)
         status_code = 200
         return JSONResponse(content="ok", status_code=status_code)
-    except Exception as err:
-        return JSONResponse(content=err, status_code=status_code)
+    except FileNotFoundError:
+        return JSONResponse(content={"message": "File not found error"},
+                            status_code=status_code)
+    except PermissionError:
+        return JSONResponse(content={"message": "Permission error"},
+                            status_code=status_code)
+    except IOError:
+        return JSONResponse(content={"message": "Error in I/O"},
+                            status_code=status_code)
+    except ValueError:
+        return JSONResponse(content={"message":
+                                     "Incorrect arg or unexpected values"},
+                            status_code=status_code)

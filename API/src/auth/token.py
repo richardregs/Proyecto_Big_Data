@@ -52,6 +52,7 @@ def validate_token(token, output=False):
     try:
         if output:
             return jwt.decode(token, key=SECRET_KEY, algorithms=[ALGORITHM])
+        jwt.decode(token, key=SECRET_KEY, algorithms=[ALGORITHM])
     except exceptions.ExpiredSignatureError:
         return JSONResponse(content={"message": "Token Expired"},
                             status_code=401)

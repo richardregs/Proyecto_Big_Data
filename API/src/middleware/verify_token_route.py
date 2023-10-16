@@ -25,7 +25,6 @@ class VerifyTokenRoute(APIRoute):
 
             if validation_response is None:
                 return await original_route(request)
-            else:
-                return validation_response
+            return validation_response
 
         return verify_token_middleware
