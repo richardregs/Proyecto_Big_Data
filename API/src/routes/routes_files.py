@@ -9,7 +9,7 @@ from utils.gcs_actions import ls_bucket, upload_file
 files_routes = APIRouter(route_class=VerifyTokenRoute)
 
 
-@files_routes.post("/users/github")
+@files_routes.post("/users")
 def users(name: str):
     """_summary_
 
