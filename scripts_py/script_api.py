@@ -15,14 +15,15 @@ df_dict = df.to_dict('records')
 df_csv = df.to_csv(sep=";", index=False, encoding='utf-8')
 
 payload = json.dumps({
-    "file_name": "Calendario Agricolav2",
+    "file_name": "Calendario Agricola_jwtv1",
     "data": df_csv
     })
 headers = {
-  'Content-Type': 'application/json; charset=utf-8'
+  'Content-Type': 'application/json; charset=utf-8',
+  'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkbWMiLCJleHAiOjE2OTc0MjE2NTJ9.LMB-3baJuqA8jX-Q2h3nAqYEMLEl4H8qSGikyQhO9yc'
 }
 
-conn.request("PUT", "/api/big_data/files/v1.0/", payload, headers)
+conn.request("POST", "/api/big_data/files/v1.0/", payload, headers)
 res = conn.getresponse()
 data = res.read()
 print(data.decode("utf-8"))
