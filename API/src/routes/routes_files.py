@@ -130,3 +130,34 @@ async def replace_file(body: Dict):
         return JSONResponse(content={"message":
                                      "Incorrect arg or unexpected values"},
                             status_code=status_code)
+
+
+@files_routes.post(path='/weather')
+async def execute_weather(body: Dict):
+    """"
+    body: {
+        "listArgs": [json]
+        }
+    """
+    response_dict = {}
+    status_code = 404
+    try:
+        response_dict = body["listArgs"]
+
+        print(response_dict)
+        print(type(response_dict))
+        status_code = 200
+        return JSONResponse(content="ok", status_code=status_code)
+    except FileNotFoundError:
+        return JSONResponse(content={"message": "File not found error"},
+                            status_code=status_code)
+    except PermissionError:
+        return JSONResponse(content={"message": "Permission error"},
+                            status_code=status_code)
+    except IOError:
+        return JSONResponse(content={"message": "Error in I/O"},
+                            status_code=status_code)
+    except ValueError:
+        return JSONResponse(content={"message":
+                                     "Incorrect arg or unexpected values"},
+                            status_code=status_code)
